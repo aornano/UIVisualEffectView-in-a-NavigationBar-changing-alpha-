@@ -55,13 +55,6 @@ class ViewController: UIViewController {
         var alpha = (randomNum / 200)
         alpha = alpha > 1.0 ? 1.0 : alpha
         print("we change alpha to : \(alpha)")
-        if #available(iOS 10.0, *) {
-            UIViewPropertyAnimator(duration: 0.01, curve: .easeInOut) {
-                self.blurView.alpha=alpha
-                }.startAnimation()
-        } else {
-            // Fallback on earlier versions
-            self.blurView.alpha = alpha
-        }
+        self.blurView.alpha = alpha
     }
 }
