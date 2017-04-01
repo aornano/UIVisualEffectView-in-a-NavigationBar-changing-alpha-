@@ -30,15 +30,13 @@ class ViewController: UIViewController {
             // Fallback on earlier versions
         }
         if let navigationBar = navigationController?.navigationBar {
-            navigationBar.barStyle = .default
-            navigationBar.isTranslucent = true
             let noEffectView = UIVisualEffectView.init(frame: navigationBar.bounds)
             self.blurEffect = UIBlurEffect(style: effect)
             self.blurView = noEffectView
-            self.navigationController?.navigationBar.addSubview(self.blurView)
+            navigationBar.addSubview(self.blurView)
             // This line below to don't blur buttons and title
-            self.navigationController?.navigationBar.sendSubview(toBack: self.blurView)
-            // Aplly the effect:
+            navigationBar.sendSubview(toBack: self.blurView)
+            // Apply the effect:
             Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.applyBlur), userInfo: nil, repeats: false)
         }
     }
@@ -57,6 +55,13 @@ class ViewController: UIViewController {
         var alpha = (randomNum / 200)
         alpha = alpha > 1.0 ? 1.0 : alpha
         print("we change alpha to : \(alpha)")
-        self.blurView.alpha = alpha
+        if #available(iOS 10.0, *) {
+            UIViewPropertyAnimator(duration: 0.01, curve: .easeInOut) {
+                self.blurView.alpha=alpha
+                }.startAnimation()
+        } else {
+            // Fallback on earlier versions
+            self.blurView.alpha = alpha
+        }
     }
 }
