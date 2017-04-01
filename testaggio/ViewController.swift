@@ -1,11 +1,9 @@
 //
 //  ViewController.swift
 //  testaggio
-//
 //  Created by Alessandro Ornano on 01/04/2017.
 //  Copyright © 2017 test. All rights reserved.
 //
-
 import UIKit
 class ViewController: UIViewController {
     var blurView: UIVisualEffectView!
@@ -57,8 +55,8 @@ class ViewController: UIViewController {
         let startNum:CGFloat = 0.0; let stopNum:CGFloat = 200.0
         let randomNum = CGFloat(arc4random()) / CGFloat(UINT32_MAX) * abs(startNum - stopNum) + min(startNum, stopNum)
         var alpha = (randomNum / 200)
-        print("we change alpha to : \(alpha)")
         alpha = alpha > 1.0 ? 1.0 : alpha
+        print("we change alpha to : \(alpha)")
         self.blurView.alpha = alpha
     }
 }
