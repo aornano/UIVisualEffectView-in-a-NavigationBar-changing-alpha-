@@ -5,10 +5,12 @@
 //  Copyright © 2017 test. All rights reserved.
 //
 import UIKit
+@available(iOS 10.0, *)
 class ViewController: UIViewController {
     var blurView: UIVisualEffectView!
     var effect: UIBlurEffectStyle = .light
     var blurEffect : UIBlurEffect!
+    var animator: UIViewPropertyAnimator!
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // This code make more transparent our navigation
@@ -24,37 +26,34 @@ class ViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 10.0, *) {
             effect = .prominent
-        } else {
-            // Fallback on earlier versions
-        }
-        if let navigationBar = navigationController?.navigationBar {
-            let noEffectView = UIVisualEffectView.init(frame: navigationBar.bounds)
-            self.blurEffect = UIBlurEffect(style: effect)
-            self.blurView = noEffectView
-            navigationBar.addSubview(self.blurView)
-            // This line below to don't blur buttons and title
-            navigationBar.sendSubview(toBack: self.blurView)
-            // Apply the effect:
-            Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.applyBlur), userInfo: nil, repeats: false)
-        }
+            if let navigationBar = navigationController?.navigationBar {
+                let noEffectView = UIVisualEffectView.init(frame: navigationBar.bounds)
+                self.blurEffect = UIBlurEffect(style: effect)
+                self.blurView = noEffectView
+                navigationBar.addSubview(self.blurView)
+                // This line below to don't blur buttons and title
+                navigationBar.sendSubview(toBack: self.blurView)
+                // Apply the effect:
+                Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.applyBlur), userInfo: nil, repeats: false)
+            }
     }
     func applyBlur() {
         print("Apply the blur effect..")
-        UIView.animate(withDuration: 10.2, animations: {
-            self.blurView.effect = self.blurEffect
-        }, completion:{ (finished: Bool) in
-            // Make test with a simple timer:
-            Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.changeAlpha), userInfo: nil, repeats: true)
-        })
+        animator = UIViewPropertyAnimator(duration: 0.5, curve: .linear)
+        self.blurView.effect = self.blurEffect
+        animator.addAnimations {
+            self.blurView.effect = nil
+        }
+        Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.changeBlurFraction), userInfo: nil, repeats: true)
+
     }
-    func changeAlpha() {
+    func changeBlurFraction() {
         let startNum:CGFloat = 0.0; let stopNum:CGFloat = 200.0
         let randomNum = CGFloat(arc4random()) / CGFloat(UINT32_MAX) * abs(startNum - stopNum) + min(startNum, stopNum)
-        var alpha = (randomNum / 200)
-        alpha = alpha > 1.0 ? 1.0 : alpha
-        print("we change alpha to : \(alpha)")
-        self.blurView.alpha = alpha
+        var blurFraction = (randomNum / 200)
+        blurFraction = blurFraction > 1.0 ? 1.0 : blurFraction
+        print("we change the blur fraction to : \(blurFraction)")
+        animator.fractionComplete = blurFraction
     }
 }
